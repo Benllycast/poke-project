@@ -1,0 +1,129 @@
+# Generated .gitignore file for: Java, Node, TypeScript, React, Spring, VSCode, Vim, SublimeText, Windows, Linux, npm, Maven, Gradle, Vite, Babel, Webpack, PostgreSQL, MongoDB, GitHub Actions, Kubernetes, Docker, Jenkins, JavaScript, Python, Kotlin
+# Created with FOSSA's DevOps Tools
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+*.logs
+.mtj.tmp/
+hs_err_pid*
+target/
+build/
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+.env
+.DS_Store
+dist/
+.cache/
+coverage/
+
+# TypeScript
+# Add TypeScript-specific ignores here
+
+# React
+node_modules/
+build/
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Spring
+# Add Spring-specific ignores here
+
+# VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Vim
+# Add Vim-specific ignores here
+
+# SublimeText
+# Add SublimeText-specific ignores here
+
+# Windows
+# Add Windows-specific ignores here
+
+# Linux
+# Add Linux-specific ignores here
+
+# npm
+# Add npm-specific ignores here
+
+# Maven
+# Add Maven-specific ignores here
+
+# Gradle
+# Add Gradle-specific ignores here
+
+# Vite
+# Add Vite-specific ignores here
+
+# Babel
+# Add Babel-specific ignores here
+
+# Webpack
+# Add Webpack-specific ignores here
+
+# PostgreSQL
+# Add PostgreSQL-specific ignores here
+
+# MongoDB
+# Add MongoDB-specific ignores here
+
+# GitHub Actions
+# Add GitHub Actions-specific ignores here
+
+# Kubernetes
+# Add Kubernetes-specific ignores here
+
+# Docker
+docker-compose.override.yml
+Dockerfile.override
+.dockerignore
+
+# Jenkins
+# Add Jenkins-specific ignores here
+
+# JavaScript
+# Add JavaScript-specific ignores here
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+venv/
+env/
+.env
+*.so
+
+# Kotlin
+# Add Kotlin-specific ignores here
+
+# Common
+.DS_Store
+Thumbs.db
+*.log
+*.bak
+*.tmp
+*.swp
+*~
+
+# IDE and editor generated files
+.idea/
+*.sublime-*
+
+# Local environment files
+.env
+.env.local
+.env.*.local
