@@ -1,0 +1,9 @@
+GET https://pokeapi.co/api/v2/pokemon
+content-type: application/json
+
+###
+
+GET https://pokeapi.co/api/v2/pokemon/1/
+Content-Type: application/json
+
+###
