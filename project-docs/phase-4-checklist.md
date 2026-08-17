@@ -86,28 +86,42 @@ Verify:
 
 ## T17 — Cleanup, NotFoundPage, and a full manual pass
 
-- [ ] Create `src/routes/NotFoundPage.jsx`
-- [ ] Edit `src/App.jsx`: wire `*` → `NotFoundPage`
-- [ ] Replace `src/App.test.jsx` (stale placeholder-`<h1>` assertion) with a router smoke test
-      (`MemoryRouter`+`QueryClientProvider`+`AuthProvider`, asserts list page + nav render)
-- [ ] `npm run lint` clean
+- [x] Create `src/routes/NotFoundPage.jsx`
+- [x] Edit `src/App.jsx`: wire `*` → `NotFoundPage`
+- [x] Replace `src/App.test.jsx` (stale placeholder-`<h1>` assertion) with a router smoke test
+      (`MemoryRouter`+`QueryClientProvider`+`AuthProvider`, asserts list page + nav render, plus an
+      unknown-route → `NotFoundPage` case)
+- [x] `npm run lint` clean
+- [x] Found during the manual pass: `PokemonDetailPage` never rendered the proprietary fields
+      (`localizedName`/`region`/`tags`), so a US-04 edit had no visible confirmation in the UI even
+      though it persisted correctly. Added a "Local details" `<dl>` section, gated on at least one field
+      being present, plus 3 more `PokemonDetailPage` tests (proprietary-field rendering, delete on
+      confirm, delete cancelled)
 
 Verify:
-- [ ] `App.test.jsx` passes
-- [ ] Manual click-through (both servers running): list → detail → register → login → sync → edit →
-      delete → logout → protected-route redirect to `/login`
-- [ ] Browser console clear of warnings/errors through the full click-through above
+- [x] `App.test.jsx` passes (2/2: list+nav render at `/`, `NotFoundPage` renders at an unknown route)
+- [x] Manual click-through (`./gradlew bootRun` + `npm run dev`, driven via the Browser pane): list loads
+      empty with no token → register → auto-logged-in → sync `25` (real PokeAPI pikachu data, stats +
+      evolution chain render) → edit localizedName/region/tags → detail page shows the persisted values
+      under "Local details" → delete (confirmed via curl register/login/DELETE/GET-404 sequence, since
+      this browser sandbox suppresses native `confirm()` dialogs — the cancel path was verified directly
+      in the browser: clicking Delete with the dialog auto-suppressed correctly did *not* delete) → list
+      reflects the delete → log out → `GET /pokemon/25/edit` directly redirects to `/login`
+- [x] Browser console clear of warnings/errors through the full click-through above (`read_console_messages`
+      checked after every step)
 
 ## Overall Phase 4 Verification
 
-- [ ] `npm run lint` passes
-- [ ] `npm run test` passes (full suite)
-- [ ] `npm run build` passes
-- [ ] Manual: `./gradlew bootRun` (backend) + `npm run dev` (frontend) both running, list loads with no
+- [x] `npm run lint` passes
+- [x] `npm run test` passes (full suite — 20/20 across 8 files)
+- [x] `npm run build` passes
+- [x] Manual: `./gradlew bootRun` (backend) + `npm run dev` (frontend) both running, list loads with no
       token
-- [ ] Manual: register → log in → sync a real Pokemon by id → appears in list
-- [ ] Manual: detail page shows stats/description/evolution chain for the synced Pokemon
-- [ ] Manual: edit `localizedName`/`region`/`tags`, reload, confirm the change persisted
-- [ ] Manual: delete the Pokemon, confirm it's gone from the list
-- [ ] Manual: log out, hit `/pokemon/<id>/edit` directly, confirm redirect to `/login`
-- [ ] `git status` on `backend/` — clean; every Phase 4 commit touches `frontend/` only
+- [x] Manual: register → log in → sync a real Pokemon by id (25/pikachu) → appears in list
+- [x] Manual: detail page shows stats/description/evolution chain for the synced Pokemon
+- [x] Manual: edit `localizedName`/`region`/`tags`, reload, confirm the change persisted (surfaced in the
+      new "Local details" section — this is what caught the missing-display gap, see T17)
+- [x] Manual: delete the Pokemon, confirm it's gone from the list
+- [x] Manual: log out, hit `/pokemon/<id>/edit` directly, confirm redirect to `/login`
+- [x] `git status` on `backend/` — clean; every Phase 4 commit touches `frontend/` only (backend's local
+      H2 file DB was touched by manual verification only, not committed — gitignored)
