@@ -13,6 +13,7 @@ FROM eclipse-temurin:25-jre-alpine
 RUN addgroup -S spring && adduser -S spring -G spring
 WORKDIR /app
 COPY --from=build /app/build/libs/*.jar app.jar
+RUN mkdir -p /app/data && chown -R spring:spring /app
 USER spring
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
