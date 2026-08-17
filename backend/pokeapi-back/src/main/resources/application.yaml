@@ -18,3 +18,6 @@ server:
   port: 8080
 pokeapi:
   base-url: https://pokeapi.co/api/v2
+jwt:
+  secret: ${JWT_SECRET:dev-only-secret-change-me-before-any-real-deployment-1234567890}
+  expiration-ms: 7200000
