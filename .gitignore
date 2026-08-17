@@ -128,3 +128,6 @@ Thumbs.db
 .env.local
 .env.*.local
 /.hidden/
+
+# Local dev datastore (file-based H2, see CLAUDE.md)
+backend/pokeapi-back/data/

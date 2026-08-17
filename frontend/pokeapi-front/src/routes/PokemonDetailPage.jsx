@@ -63,6 +63,31 @@ function PokemonDetailPage() {
           <EvolutionChain stages={data.evolutionChain} />
         </section>
       )}
+      {(data.localizedName || data.region || data.tags) && (
+        <section>
+          <h2>Local details</h2>
+          <dl className="pokemon-detail-proprietary">
+            {data.localizedName && (
+              <>
+                <dt>Localized name</dt>
+                <dd>{data.localizedName}</dd>
+              </>
+            )}
+            {data.region && (
+              <>
+                <dt>Region</dt>
+                <dd>{data.region}</dd>
+              </>
+            )}
+            {data.tags && (
+              <>
+                <dt>Tags</dt>
+                <dd>{data.tags}</dd>
+              </>
+            )}
+          </dl>
+        </section>
+      )}
       {isAuthenticated && (
         <p>
           <Link to={`/pokemon/${id}/edit`}>Edit</Link>{' '}

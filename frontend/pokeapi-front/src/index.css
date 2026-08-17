@@ -180,3 +180,17 @@ button:disabled {
 [role='alert'] {
   color: #b91c1c;
 }
+
+.pokemon-detail-proprietary {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 12px;
+}
+
+.pokemon-detail-proprietary dt {
+  color: var(--text);
+}
+
+.pokemon-detail-proprietary dd {
+  margin: 0;
+}

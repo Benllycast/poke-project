@@ -6,6 +6,7 @@ import PokemonDetailPage from './routes/PokemonDetailPage.jsx'
 import PokemonEditPage from './routes/PokemonEditPage.jsx'
 import LoginPage from './routes/LoginPage.jsx'
 import RegisterPage from './routes/RegisterPage.jsx'
+import NotFoundPage from './routes/NotFoundPage.jsx'
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </div>
   )

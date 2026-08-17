@@ -1,4 +1,5 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { describe, expect, it, vi, beforeEach } from 'vitest'
@@ -15,6 +16,7 @@ function renderAt(id) {
       <AuthProvider>
         <MemoryRouter initialEntries={[`/pokemon/${id}`]}>
           <Routes>
+            <Route path="/" element={<p>List page</p>} />
             <Route path="/pokemon/:id" element={<PokemonDetailPage />} />
           </Routes>
         </MemoryRouter>
@@ -35,6 +37,7 @@ const detail = {
 
 beforeEach(() => {
   vi.clearAllMocks()
+  localStorage.clear()
 })
 
 describe('PokemonDetailPage', () => {
@@ -56,5 +59,57 @@ describe('PokemonDetailPage', () => {
     renderAt(9999)
 
     expect(await screen.findByRole('alert')).toHaveTextContent('Pokemon not found.')
+  })
+
+  it('renders proprietary fields when present', async () => {
+    pokemonApi.getById.mockResolvedValue({
+      ...detail,
+      localizedName: 'Pikachu (Kanto)',
+      region: 'Kanto',
+      tags: 'starter,electric',
+    })
+
+    renderAt(35)
+
+    expect(await screen.findByText('Pikachu (Kanto)')).toBeInTheDocument()
+    expect(screen.getByText('Kanto')).toBeInTheDocument()
+    expect(screen.getByText('starter,electric')).toBeInTheDocument()
+  })
+
+  it('shows Edit/Delete only when authenticated', async () => {
+    pokemonApi.getById.mockResolvedValue(detail)
+
+    renderAt(35)
+
+    await screen.findByRole('heading', { name: 'clefairy' })
+    expect(screen.queryByRole('button', { name: 'Delete' })).not.toBeInTheDocument()
+  })
+
+  it('deletes the Pokemon and navigates to the list on confirm', async () => {
+    localStorage.setItem('pokeapp_token', 'token-abc')
+    pokemonApi.getById.mockResolvedValue(detail)
+    pokemonApi.remove.mockResolvedValue(null)
+    vi.spyOn(window, 'confirm').mockReturnValue(true)
+    const user = userEvent.setup()
+
+    renderAt(35)
+
+    await user.click(await screen.findByRole('button', { name: 'Delete' }))
+
+    await waitFor(() => expect(pokemonApi.remove).toHaveBeenCalledWith('35'))
+    expect(await screen.findByText('List page')).toBeInTheDocument()
+  })
+
+  it('does not delete when the confirm dialog is cancelled', async () => {
+    localStorage.setItem('pokeapp_token', 'token-abc')
+    pokemonApi.getById.mockResolvedValue(detail)
+    vi.spyOn(window, 'confirm').mockReturnValue(false)
+    const user = userEvent.setup()
+
+    renderAt(35)
+
+    await user.click(await screen.findByRole('button', { name: 'Delete' }))
+
+    expect(pokemonApi.remove).not.toHaveBeenCalled()
   })
 })
