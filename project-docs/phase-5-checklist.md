@@ -42,17 +42,18 @@ Verify:
 
 ## T20 — Frontend Dockerfile + apiClient fix
 
-- [ ] Edit `src/api/apiClient.js`: `||` → `??` for the `VITE_API_BASE_URL` fallback
-- [ ] Create `frontend/pokeapi-front/Dockerfile` (multi-stage: `node:22-alpine` build with
+- [x] Edit `src/api/apiClient.js`: `||` → `??` for the `VITE_API_BASE_URL` fallback
+- [x] Create `frontend/pokeapi-front/Dockerfile` (multi-stage: `node:22-alpine` build with
       `ARG VITE_API_BASE_URL=""`, `nginx:alpine` runtime serving `dist/`)
-- [ ] Create `frontend/pokeapi-front/nginx.conf` (SPA fallback + `/api/` reverse proxy to `backend:8080`)
-- [ ] Create `frontend/pokeapi-front/.dockerignore` (`node_modules/`, `dist/`)
+- [x] Create `frontend/pokeapi-front/nginx.conf` (SPA fallback + `/api/` reverse proxy to `backend:8080`)
+- [x] Create `frontend/pokeapi-front/.dockerignore` (`node_modules/`, `dist/`, `.env*`)
 
 Verify:
-- [ ] `npm run test` still passes (the `??` fix doesn't change default-URL behavior)
-- [ ] `npm run lint` clean
-- [ ] `npm run build` still passes
-- [ ] `docker build -t pokeapi-front frontend/pokeapi-front` succeeds
+- [x] `npm run test` still passes (20/20 — the `??` fix doesn't change default-URL behavior)
+- [x] `npm run lint` clean
+- [x] `npm run build` still passes
+- [ ] `docker build -t pokeapi-front frontend/pokeapi-front` succeeds — **NOT independently verified**,
+      same Docker-unavailable caveat as T19
 
 ## T21 — docker-compose.yml
 
