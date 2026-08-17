@@ -100,3 +100,30 @@ a {
   gap: 12px;
   margin-top: 24px;
 }
+
+.stat-bar {
+  display: grid;
+  grid-template-columns: 100px 1fr 40px;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0;
+}
+
+.stat-bar-track {
+  background: var(--border);
+  border-radius: 4px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.stat-bar-fill {
+  background: var(--text-h);
+  height: 100%;
+}
+
+.evolution-chain {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+}
