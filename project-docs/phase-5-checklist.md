@@ -81,13 +81,16 @@ Verify:
 
 ## T22 — README
 
-- [ ] Rewrite root `README.md`: overview + 4 user stories, architecture summary, local setup
+- [x] Rewrite root `README.md`: overview + 4 user stories, architecture summary, local setup
       (backend + frontend), Docker setup, demo credentials, endpoint table, test commands, note on the
       unused decoy `frontend/package.json`
 
 Verify:
-- [ ] All documented commands actually run as written (spot-check each one)
-- [ ] Endpoint table matches the real `PokemonController`/`AuthController` routes
+- [x] Backend/frontend commands (`bootRun`, `test`, `npm run dev/lint/test/build`) all already verified
+      live earlier in Phases 0–5; Docker commands documented but not independently run (see T19–T21
+      caveat)
+- [x] Endpoint table matches the real `PokemonController`/`AuthController` routes — checked against
+      `@GetMapping`/`@PostMapping`/`@PutMapping`/`@DeleteMapping` annotations directly
 
 ## T23 — Final polish pass
 
