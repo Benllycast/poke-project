@@ -1,7 +1,12 @@
+import { Routes, Route } from 'react-router-dom'
+import PokemonListPage from './routes/PokemonListPage.jsx'
+
 function App() {
   return (
     <div id="app-shell">
-      <h1>Pokedex</h1>
+      <Routes>
+        <Route path="/" element={<PokemonListPage />} />
+      </Routes>
     </div>
   )
 }

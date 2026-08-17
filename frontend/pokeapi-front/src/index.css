@@ -38,3 +38,65 @@ body {
   min-height: 100svh;
   box-sizing: border-box;
 }
+
+#app-shell {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 24px 48px;
+}
+
+h1, h2, h3 {
+  color: var(--text-h);
+}
+
+a {
+  color: inherit;
+}
+
+.pokemon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.pokemon-card {
+  display: block;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.pokemon-card h3 {
+  margin: 8px 0 4px;
+  text-transform: capitalize;
+}
+
+.pokemon-card-category {
+  margin: 0 0 8px;
+  color: var(--text);
+}
+
+.pokemon-card-skills {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.pokemon-card-skills li {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 0.8em;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+}
