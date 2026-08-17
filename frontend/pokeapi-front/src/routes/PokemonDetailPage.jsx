@@ -1,15 +1,33 @@
-import { Link, useParams } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import * as pokemonApi from '../api/pokemonApi.js'
 import StatBar from '../components/StatBar.jsx'
 import EvolutionChain from '../components/EvolutionChain.jsx'
+import { useAuth } from '../context/AuthContext.jsx'
 
 function PokemonDetailPage() {
   const { id } = useParams()
+  const { isAuthenticated } = useAuth()
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['pokemon', 'detail', id],
     queryFn: () => pokemonApi.getById(id),
   })
+
+  const deleteMutation = useMutation({
+    mutationFn: () => pokemonApi.remove(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pokemon', 'list'] })
+      navigate('/')
+    },
+  })
+
+  function handleDelete() {
+    if (window.confirm(`Delete ${data.name}?`)) {
+      deleteMutation.mutate()
+    }
+  }
 
   if (isLoading) {
     return <p>Loading Pokemon...</p>
@@ -44,6 +62,15 @@ function PokemonDetailPage() {
           <h2>Evolution</h2>
           <EvolutionChain stages={data.evolutionChain} />
         </section>
+      )}
+      {isAuthenticated && (
+        <p>
+          <Link to={`/pokemon/${id}/edit`}>Edit</Link>{' '}
+          <button type="button" onClick={handleDelete} disabled={deleteMutation.isPending}>
+            Delete
+          </button>
+          {deleteMutation.isError && <span role="alert"> {deleteMutation.error.message}</span>}
+        </p>
       )}
     </article>
   )

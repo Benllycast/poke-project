@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 import PokemonListPage from './PokemonListPage.jsx'
 import * as pokemonApi from '../api/pokemonApi.js'
+import { AuthProvider } from '../context/AuthContext.jsx'
 
 vi.mock('../api/pokemonApi.js')
 
@@ -11,9 +12,11 @@ function renderPage() {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } })
   return render(
     <QueryClientProvider client={queryClient}>
-      <MemoryRouter>
-        <PokemonListPage />
-      </MemoryRouter>
+      <AuthProvider>
+        <MemoryRouter>
+          <PokemonListPage />
+        </MemoryRouter>
+      </AuthProvider>
     </QueryClientProvider>,
   )
 }
