@@ -36,22 +36,26 @@ Verify:
 
 ## T15 — Auth: AuthContext, LoginPage, RegisterPage, ProtectedRoute
 
-- [ ] Create `src/api/authApi.js` (`register`, `login`)
-- [ ] Create `src/context/AuthContext.jsx` (`{ token, email }` state seeded from `localStorage`,
+- [x] Create `src/api/authApi.js` (`register`, `login`)
+- [x] Create `src/context/AuthContext.jsx` (`{ token, email }` state seeded from `localStorage`,
       `login`/`register`/`logout`, `isAuthenticated`)
-- [ ] Create `src/components/ProtectedRoute.jsx` (redirect to `/login`, preserve attempted location)
-- [ ] Create `src/components/NavBar.jsx` (logged-out vs logged-in nav state)
-- [ ] Create `src/routes/LoginPage.jsx`
-- [ ] Create `src/routes/RegisterPage.jsx`
-- [ ] Edit `src/main.jsx`: wrap `<App/>` in `<AuthProvider>`
-- [ ] Edit `src/App.jsx`: wire `/login`, `/register` routes + render `NavBar`
+- [x] Create `src/components/ProtectedRoute.jsx` (redirect to `/login`, preserve attempted location)
+- [x] Create `src/components/NavBar.jsx` (logged-out vs logged-in nav state)
+- [x] Create `src/routes/LoginPage.jsx`
+- [x] Create `src/routes/RegisterPage.jsx`
+- [x] Edit `src/main.jsx`: wrap `<App/>` in `<AuthProvider>`
+- [x] Edit `src/App.jsx`: wire `/login`, `/register` routes + render `NavBar`
+- [x] `useAuth` needed an `eslint-disable-next-line react-refresh/only-export-components` — colocating
+      the hook with its provider in one file trips the Vite HMR-boundary rule; a real correctness issue
+      would need a split file, this is just an HMR-granularity nicety
 
 Verify:
-- [ ] `AuthContext.test.jsx`: successful login updates context state and `localStorage`
-- [ ] `AuthContext.test.jsx`: failed login (mocked 401) leaves state unauthenticated
-- [ ] `ProtectedRoute.test.jsx`: redirects to `/login` when logged out
-- [ ] `ProtectedRoute.test.jsx`: renders children when logged in
-- [ ] `npm run test -- --run AuthContext ProtectedRoute` passes
+- [x] `AuthContext.test.jsx`: successful login updates context state and `localStorage`
+- [x] `AuthContext.test.jsx`: failed login (mocked 401) leaves state unauthenticated
+- [x] `ProtectedRoute.test.jsx`: redirects to `/login` when logged out
+- [x] `ProtectedRoute.test.jsx`: renders children when logged in
+- [x] `npm run test -- --run AuthContext ProtectedRoute` passes (4/4)
+- [x] `npm run lint` clean
 
 ## T16 — Sync control + PokemonForm (edit) + delete (US-03/US-04)
 
