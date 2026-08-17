@@ -5,6 +5,8 @@ import com.bcastillo.pokeapiback.domain.port.PokeApiClientPort;
 import com.bcastillo.pokeapiback.domain.port.PokemonRepositoryPort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class PokemonSyncService {
 
@@ -23,5 +25,9 @@ public class PokemonSyncService {
                         existing.localizedName(), existing.region(), existing.tags()))
                 .orElse(replica);
         return pokemonRepositoryPort.save(merged);
+    }
+
+    public List<Pokemon> syncByIds(List<Integer> ids) {
+        return ids.stream().map(id -> syncPokemon(String.valueOf(id))).toList();
     }
 }

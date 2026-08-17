@@ -69,6 +69,22 @@ class PokemonSyncServiceTest {
                 "Fée-Fée".equals(p.localizedName()) && p.weight() == 80));
     }
 
+    @Test
+    void syncByIds_syncsEveryIdAndReturnsResults() {
+        Pokemon replica1 = pokemon(1L, 10, null, null, null);
+        Pokemon replica2 = pokemon(2L, 20, null, null, null);
+        when(pokeApiClientPort.fetchReplicaData("1")).thenReturn(replica1);
+        when(pokeApiClientPort.fetchReplicaData("2")).thenReturn(replica2);
+        when(pokemonRepositoryPort.findById(any())).thenReturn(Optional.empty());
+        when(pokemonRepositoryPort.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        List<Pokemon> result = service.syncByIds(List.of(1, 2));
+
+        assertThat(result).containsExactly(replica1, replica2);
+        verify(pokemonRepositoryPort).save(replica1);
+        verify(pokemonRepositoryPort).save(replica2);
+    }
+
     private Pokemon pokemon(long id, int weight, String localizedName, String region, String tags) {
         return new Pokemon(id, "clefairy", "sprite.png", "Fairy Pokémon", weight, 6,
                 List.of("friend-guard"), List.of("pound"), List.of(new StatValue("speed", 35, 0)),

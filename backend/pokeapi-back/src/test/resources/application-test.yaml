@@ -15,3 +15,6 @@ jwt:
   expiration-ms: 7200000
 pokeapi:
   base-url: https://pokeapi.co/api/v2
+app:
+  seed:
+    enabled: false
