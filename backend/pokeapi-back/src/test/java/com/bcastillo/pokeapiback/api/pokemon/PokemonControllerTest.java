@@ -1,9 +1,11 @@
 package com.bcastillo.pokeapiback.api.pokemon;
 
 import com.bcastillo.pokeapiback.api.pokemon.mapper.PokemonDtoMapper;
+import com.bcastillo.pokeapiback.application.pokemon.PokemonEditService;
 import com.bcastillo.pokeapiback.application.pokemon.PokemonQueryService;
 import com.bcastillo.pokeapiback.application.pokemon.PokemonSyncService;
 import com.bcastillo.pokeapiback.domain.exception.PokeApiResourceNotFoundException;
+import com.bcastillo.pokeapiback.domain.exception.PokemonAlreadyExistsException;
 import com.bcastillo.pokeapiback.domain.exception.PokemonNotFoundException;
 import com.bcastillo.pokeapiback.domain.model.EvolutionStage;
 import com.bcastillo.pokeapiback.domain.model.PageResult;
@@ -14,15 +16,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -39,6 +46,9 @@ class PokemonControllerTest {
 
     @MockitoBean
     private PokemonQueryService queryService;
+
+    @MockitoBean
+    private PokemonEditService editService;
 
     @Test
     void sync_returnsPokemonResponse() throws Exception {
@@ -92,6 +102,93 @@ class PokemonControllerTest {
         when(queryService.getById(9999L)).thenThrow(new PokemonNotFoundException(9999L));
 
         mockMvc.perform(get("/api/pokemon/9999"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404));
+    }
+
+    @Test
+    void create_validPayload_returns201() throws Exception {
+        when(editService.create(any())).thenReturn(pokemon(100000L));
+
+        mockMvc.perform(post("/api/pokemon")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"id":100000,"name":"custom-mon","weight":10,"height":5}
+                                """))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(100000));
+    }
+
+    @Test
+    void create_malformedPayload_missingName_returns400() throws Exception {
+        mockMvc.perform(post("/api/pokemon")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"id":100000}
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400));
+    }
+
+    @Test
+    void create_duplicateId_returns409() throws Exception {
+        when(editService.create(any())).thenThrow(new PokemonAlreadyExistsException(35L));
+
+        mockMvc.perform(post("/api/pokemon")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"id":35,"name":"clefairy"}
+                                """))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status").value(409));
+    }
+
+    @Test
+    void update_validPayload_returns200() throws Exception {
+        when(editService.update(eq(35L), any())).thenReturn(pokemon(35L));
+
+        mockMvc.perform(put("/api/pokemon/35")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"name":"clefairy-updated","weight":80}
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(35));
+    }
+
+    @Test
+    void update_malformedPayload_missingName_returns400() throws Exception {
+        mockMvc.perform(put("/api/pokemon/35")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400));
+    }
+
+    @Test
+    void update_missingId_returns404() throws Exception {
+        when(editService.update(eq(9999L), any())).thenThrow(new PokemonNotFoundException(9999L));
+
+        mockMvc.perform(put("/api/pokemon/9999")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"name":"ghost-mon"}
+                                """))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404));
+    }
+
+    @Test
+    void delete_existingId_returns204() throws Exception {
+        mockMvc.perform(delete("/api/pokemon/35"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void delete_missingId_returns404() throws Exception {
+        doThrow(new PokemonNotFoundException(9999L)).when(editService).delete(9999L);
+
+        mockMvc.perform(delete("/api/pokemon/9999"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(404));
     }
