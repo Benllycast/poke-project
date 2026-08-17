@@ -23,16 +23,16 @@ Verify:
 
 ## T14 — PokemonDetailPage (US-02)
 
-- [ ] Create `src/components/StatBar.jsx` (stat name + bar sized by `baseStat`)
-- [ ] Create `src/components/EvolutionChain.jsx` (ordered stage list with `minLevel`)
-- [ ] Create `src/routes/PokemonDetailPage.jsx` (`useQuery`, loading + 404-aware error state)
-- [ ] Edit `src/App.jsx`: wire `/pokemon/:id` route
+- [x] Create `src/components/StatBar.jsx` (stat name + bar sized by `baseStat`)
+- [x] Create `src/components/EvolutionChain.jsx` (ordered stage list with `minLevel`)
+- [x] Create `src/routes/PokemonDetailPage.jsx` (`useQuery`, loading + 404-aware error state)
+- [x] Edit `src/App.jsx`: wire `/pokemon/:id` route
 
 Verify:
-- [ ] `PokemonDetailPage.test.jsx`: renders image, stats, description, evolution chain from a stubbed
+- [x] `PokemonDetailPage.test.jsx`: renders image, stats, description, evolution chain from a stubbed
       detail response
-- [ ] `PokemonDetailPage.test.jsx`: a mocked `ApiError{status:404}` renders a not-found state, no crash
-- [ ] `npm run test -- --run PokemonDetailPage` passes
+- [x] `PokemonDetailPage.test.jsx`: a mocked `ApiError{status:404}` renders a not-found state, no crash
+- [x] `npm run test -- --run PokemonDetailPage` passes (2/2)
 
 ## T15 — Auth: AuthContext, LoginPage, RegisterPage, ProtectedRoute
 
