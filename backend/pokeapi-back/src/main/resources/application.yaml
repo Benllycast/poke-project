@@ -2,7 +2,7 @@ spring:
   application:
     name: pokeapi-back
   profiles:
-    active: dev
+    default: dev
   datasource:
     url: jdbc:h2:file:./data/pokedb;AUTO_SERVER=TRUE
     driver-class-name: org.h2.Driver

@@ -1,8 +1,10 @@
 package com.bcastillo.pokeapiback.api.common;
 
+import com.bcastillo.pokeapiback.domain.exception.InvalidCredentialsException;
 import com.bcastillo.pokeapiback.domain.exception.PokeApiResourceNotFoundException;
 import com.bcastillo.pokeapiback.domain.exception.PokemonAlreadyExistsException;
 import com.bcastillo.pokeapiback.domain.exception.PokemonNotFoundException;
+import com.bcastillo.pokeapiback.domain.exception.UserAlreadyExistsException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +36,18 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiErrorResponse> handlePokemonAlreadyExists(PokemonAlreadyExistsException ex,
                                                                         HttpServletRequest request) {
         return build(HttpStatus.CONFLICT, ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<ApiErrorResponse> handleUserAlreadyExists(UserAlreadyExistsException ex,
+                                                                      HttpServletRequest request) {
+        return build(HttpStatus.CONFLICT, ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ApiErrorResponse> handleInvalidCredentials(InvalidCredentialsException ex,
+                                                                       HttpServletRequest request) {
+        return build(HttpStatus.UNAUTHORIZED, ex.getMessage(), request);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

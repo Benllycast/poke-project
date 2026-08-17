@@ -11,10 +11,17 @@ import com.bcastillo.pokeapiback.domain.model.EvolutionStage;
 import com.bcastillo.pokeapiback.domain.model.PageResult;
 import com.bcastillo.pokeapiback.domain.model.Pokemon;
 import com.bcastillo.pokeapiback.domain.model.StatValue;
+import com.bcastillo.pokeapiback.infrastructure.security.JwtAuthenticationFilter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.security.autoconfigure.SecurityAutoConfiguration;
+import org.springframework.boot.security.autoconfigure.UserDetailsServiceAutoConfiguration;
+import org.springframework.boot.security.autoconfigure.web.servlet.SecurityFilterAutoConfiguration;
+import org.springframework.boot.security.autoconfigure.web.servlet.ServletWebSecurityAutoConfiguration;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -33,7 +40,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(PokemonController.class)
+@WebMvcTest(controllers = PokemonController.class, excludeAutoConfiguration = {
+        SecurityAutoConfiguration.class, ServletWebSecurityAutoConfiguration.class,
+        SecurityFilterAutoConfiguration.class, UserDetailsServiceAutoConfiguration.class
+}, excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtAuthenticationFilter.class))
 @AutoConfigureMockMvc(addFilters = false)
 @Import(PokemonDtoMapper.class)
 class PokemonControllerTest {
