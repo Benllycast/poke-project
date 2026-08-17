@@ -1,6 +1,7 @@
 package com.bcastillo.pokeapiback.api.common;
 
 import com.bcastillo.pokeapiback.domain.exception.PokeApiResourceNotFoundException;
+import com.bcastillo.pokeapiback.domain.exception.PokemonNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(PokeApiResourceNotFoundException.class)
     public ResponseEntity<ApiErrorResponse> handlePokeApiResourceNotFound(PokeApiResourceNotFoundException ex,
                                                                            HttpServletRequest request) {
+        return build(HttpStatus.NOT_FOUND, ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(PokemonNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handlePokemonNotFound(PokemonNotFoundException ex,
+                                                                    HttpServletRequest request) {
         return build(HttpStatus.NOT_FOUND, ex.getMessage(), request);
     }
 
