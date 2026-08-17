@@ -5,21 +5,21 @@ off as they land.
 
 ## T13 — API client + PokemonListPage (US-01)
 
-- [ ] Create `.env.example` (`VITE_API_BASE_URL=http://localhost:8080`)
-- [ ] Create `src/api/apiClient.js` (fetch wrapper, `Authorization` header from
+- [x] Create `.env.example` (`VITE_API_BASE_URL=http://localhost:8080`)
+- [x] Create `src/api/apiClient.js` (fetch wrapper, `Authorization` header from
       `localStorage.getItem('pokeapp_token')`, JSON parsing, `ApiError { status, message }` on non-2xx)
-- [ ] Create `src/api/pokemonApi.js` (`list(page, size)`, `getById(id)`)
-- [ ] Create `src/components/PokemonCard.jsx` (sprite, category, mass, abilities+moves)
-- [ ] Create `src/components/Pagination.jsx`
-- [ ] Create `src/routes/PokemonListPage.jsx` (`useQuery`, loading/error/empty states)
-- [ ] Edit `src/App.jsx`: wire `/` route
+- [x] Create `src/api/pokemonApi.js` (`list(page, size)`, `getById(id)`)
+- [x] Create `src/components/PokemonCard.jsx` (sprite, category, mass, abilities+moves)
+- [x] Create `src/components/Pagination.jsx`
+- [x] Create `src/routes/PokemonListPage.jsx` (`useQuery`, loading/error/empty states)
+- [x] Edit `src/App.jsx`: wire `/` route
 
 Verify:
-- [ ] `PokemonCard.test.jsx`: renders sprite, category, mass, and skills from a stub Pokemon
-- [ ] `PokemonListPage.test.jsx` (`pokemonApi` mocked): renders one card per item in a stubbed page
+- [x] `PokemonCard.test.jsx`: renders sprite, category, mass, and skills from a stub Pokemon
+- [x] `PokemonListPage.test.jsx` (`pokemonApi` mocked): renders one card per item in a stubbed page
       response
-- [ ] `PokemonListPage.test.jsx`: clicking next page calls `list` with the incremented page number
-- [ ] `npm run test -- --run PokemonCard PokemonListPage` passes
+- [x] `PokemonListPage.test.jsx`: clicking next page calls `list` with the incremented page number
+- [x] `npm run test -- --run PokemonCard PokemonListPage` passes (4/4)
 
 ## T14 — PokemonDetailPage (US-02)
 
