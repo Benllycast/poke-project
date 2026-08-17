@@ -34,11 +34,15 @@ Verify:
 Verify:
 - [x] `./gradlew bootJar -x test` still produces exactly one jar in `build/libs/`
       (`pokeapi-back-0.0.1-SNAPSHOT.jar`, no more `-plain.jar`)
-- [ ] `docker build -t pokeapi-back backend/pokeapi-back` succeeds — **NOT independently verified**: no
-      Docker CLI is available in this execution environment (checked both bash and PowerShell). Dockerfile
-      was hand-reviewed for correctness instead; needs verification wherever Docker is actually available.
-- [ ] `docker run --rm -p 8080:8080 pokeapi-back` boots, `curl http://localhost:8080/api/pokemon` → 200 —
-      same caveat as above, not run
+- [x] `docker build -t pokeapi-back backend/pokeapi-back` succeeds — run via WSL2 Ubuntu-22.04 (Docker
+      wasn't available in the primary Windows environment; the user pointed at their existing WSL Docker
+      install). Build stage resolved deps and ran `bootJar` cleanly.
+- [x] Found by actually running the container: it exits immediately with
+      `AccessDeniedException: /app/data/pokedb.lock.db`. The image adds a non-root `spring` user (good
+      practice) but the named volume mounts at `/app/data` owned by root, and the JRE stage never chowned
+      that path — H2 couldn't write its lock file. Fixed by adding
+      `RUN mkdir -p /app/data && chown -R spring:spring /app` before `USER spring`. Confirmed fixed via a
+      full `docker compose up --build` (see T21) — backend now boots, migrates, and seeds successfully.
 
 ## T20 — Frontend Dockerfile + apiClient fix
 
@@ -52,8 +56,8 @@ Verify:
 - [x] `npm run test` still passes (20/20 — the `??` fix doesn't change default-URL behavior)
 - [x] `npm run lint` clean
 - [x] `npm run build` still passes
-- [ ] `docker build -t pokeapi-front frontend/pokeapi-front` succeeds — **NOT independently verified**,
-      same Docker-unavailable caveat as T19
+- [x] `docker build -t pokeapi-front frontend/pokeapi-front` succeeds (via WSL2 Ubuntu-22.04 Docker) —
+      `npm ci` + `vite build` ran cleanly inside the container, nginx stage copied `dist/` + `nginx.conf`
 
 ## T21 — docker-compose.yml
 
@@ -66,18 +70,27 @@ Verify:
       `.requestMatchers("/actuator/health").permitAll()` and a matching assertion in
       `AuthenticationFlowTest`
 
-Verify:
-- [x] `./gradlew test --tests "*AuthenticationFlowTest" --tests "*PokemonControllerTest"` passes —
-      confirms the new `permitAll` rule works and doesn't loosen anything else
-- [ ] `docker compose up --build` from a clean state (`docker compose down -v` first) — backend logs show
-      2 Flyway migrations + seeded Pokemon + demo user — **NOT independently verified**, same
-      Docker-unavailable caveat as T19/T20
-- [ ] `http://localhost:5173` shows a pre-populated list with no login — not verified, same caveat
-- [ ] Log in with `demo@pokeapp.dev` / `Demo1234!` succeeds — not verified, same caveat
-- [ ] Open a detail page, edit proprietary fields, confirm persistence — not verified, same caveat
-- [ ] Browser console clean throughout — not verified, same caveat
-- [ ] Restart (`docker compose up`, same volume): seeder does not re-sync/duplicate, demo login still
-      works — not verified, same caveat
+Verify (all run for real via WSL2 Ubuntu-22.04 Docker, backend temporarily remapped to host port 8090
+during this run only — port 8080 was held by an unrelated pre-existing container on the user's machine;
+`docker-compose.yml` itself was reverted back to `8080:8080` before committing):
+- [x] `docker compose down -v && docker compose up --build` from a clean state — backend logs show both
+      Flyway migrations, `Seeded demo user demo@pokeapp.dev / Demo1234!`, `Seeded 20 Pokemon`; both
+      containers reach `Healthy`/`Started`
+- [x] Frontend root shows a pre-populated list with no login — confirmed via `get_page_text` in the
+      browser: real Bulbasaur..Raticate data, sprites, categories, mass, abilities/moves all render
+- [x] `GET /api/pokemon` via `http://localhost:5173/api/...` (through nginx) returns the same data as
+      `http://localhost:<backend-port>/api/...` directly — same-origin proxy confirmed working, and
+      confirms the `apiClient.js` `??` fix actually does what it was fixed for
+- [x] Log in with `demo@pokeapp.dev` / `Demo1234!` succeeds — nav updates to show the email + "Log out",
+      `SyncForm` (protected UI) appears
+- [x] Edit a Pokemon's `localizedName`/`region`/`tags` via the real API, `GET` again — values persisted
+- [x] Browser console clean throughout (checked after every step via `read_console_messages`)
+- [x] Restart (`docker compose restart backend`, same volume): logs show
+      `Schema "PUBLIC" is up to date. No migration necessary` and no new "Seeded..." lines;
+      `totalElements` still 20 (no duplicates); the earlier edit is still there; demo login still returns
+      200
+- [x] Found + fixed along the way: the non-root-user/volume-ownership bug in T19 (blocked every boot until
+      fixed)
 
 ## T22 — README
 
@@ -98,11 +111,7 @@ Verify:
 - [x] `npm run lint && npm run test && npm run build` passes (frontend, full suite — 20/20 tests)
 - [x] Grep check: no `import ...api.` / `import ...infrastructure.` inside `domain/` or `application/` —
       zero matches in both
-- [ ] Browser console check on the Dockerized app — **NOT possible in this environment** (no Docker);
-      Phase 4 already did a full manual browser click-through with console checks against the
-      non-Dockerized dev servers, but that's not the same artifact as the containerized build (different
-      `VITE_API_BASE_URL`, nginx serving instead of Vite dev server). Needs a real run wherever Docker is
-      available.
+- [x] Browser console check on the Dockerized app — done via WSL2 Docker (see T21); clean throughout
 - [x] `git log` review for the branch — one implementation commit + one checklist-checkoff commit per
       task, consistent with every prior phase; reads cleanly
 
@@ -110,16 +119,12 @@ Verify:
 
 - [x] `./gradlew build` passes (53/53)
 - [x] `npm run lint && npm run test && npm run build` passes (20/20)
-- [ ] `docker compose down -v && docker compose up --build` from a clean state produces a working,
-      pre-seeded, login-able app (the project's stated Definition of Done) — **NOT independently
-      verified: no Docker CLI is available in this execution environment** (checked both bash and
-      PowerShell; `docker`/`docker info` not found). Every Docker-related file (`Dockerfile` x2,
-      `docker-compose.yml`, `nginx.conf`, `.dockerignore` x2) was hand-reviewed for correctness — build
-      stages, jar-glob ambiguity (fixed by disabling the plain jar), the empty-string base-URL bug (fixed),
-      the `/actuator/health` auth gap (fixed) — but the actual `docker compose up` was never run. **This
-      needs to be run and confirmed wherever Docker is actually available before calling Phase 5 done.**
-- [ ] Demo credentials documented in README work end-to-end — verified as far as the underlying mechanism
-      goes (`DemoDataSeederTest` + `AuthenticationFlowTest` cover the register/login path the seeder
-      reuses), but the actual seeded login-through-the-UI flow depends on the same unverified Docker run
-      above
+- [x] `docker compose down -v && docker compose up --build` from a clean state produces a working,
+      pre-seeded, login-able app (the project's stated Definition of Done) — **verified for real** via
+      WSL2 Ubuntu-22.04 Docker (no Docker CLI in the primary Windows environment; the user pointed at
+      their existing WSL install). Along the way this surfaced and fixed a real bug that would have
+      blocked every container boot: the non-root `spring` user had no write access to the `/app/data`
+      volume mount (see T19).
+- [x] Demo credentials documented in README work end-to-end — logged in through the actual browser
+      against the Dockerized stack, nav updated correctly
 - [x] `git status` clean on both `backend/` and `frontend/` outside this phase's intended changes
