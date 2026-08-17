@@ -94,17 +94,32 @@ Verify:
 
 ## T23 — Final polish pass
 
-- [ ] `./gradlew build` passes (backend, full suite)
-- [ ] `npm run lint && npm run test && npm run build` passes (frontend, full suite)
-- [ ] Grep check: no `import ...api.` / `import ...infrastructure.` inside `domain/`
-- [ ] Browser console check on the Dockerized app (not just `npm run dev`)
-- [ ] `git log` review for the branch — commit history reads cleanly
+- [x] `./gradlew build` passes (backend, full suite — 53/53 tests)
+- [x] `npm run lint && npm run test && npm run build` passes (frontend, full suite — 20/20 tests)
+- [x] Grep check: no `import ...api.` / `import ...infrastructure.` inside `domain/` or `application/` —
+      zero matches in both
+- [ ] Browser console check on the Dockerized app — **NOT possible in this environment** (no Docker);
+      Phase 4 already did a full manual browser click-through with console checks against the
+      non-Dockerized dev servers, but that's not the same artifact as the containerized build (different
+      `VITE_API_BASE_URL`, nginx serving instead of Vite dev server). Needs a real run wherever Docker is
+      available.
+- [x] `git log` review for the branch — one implementation commit + one checklist-checkoff commit per
+      task, consistent with every prior phase; reads cleanly
 
 ## Overall Phase 5 Verification
 
-- [ ] `./gradlew build` passes
-- [ ] `npm run lint && npm run test && npm run build` passes
+- [x] `./gradlew build` passes (53/53)
+- [x] `npm run lint && npm run test && npm run build` passes (20/20)
 - [ ] `docker compose down -v && docker compose up --build` from a clean state produces a working,
-      pre-seeded, login-able app (the project's stated Definition of Done)
-- [ ] Demo credentials documented in README work end-to-end
-- [ ] `git status` clean on both `backend/` and `frontend/` outside this phase's intended changes
+      pre-seeded, login-able app (the project's stated Definition of Done) — **NOT independently
+      verified: no Docker CLI is available in this execution environment** (checked both bash and
+      PowerShell; `docker`/`docker info` not found). Every Docker-related file (`Dockerfile` x2,
+      `docker-compose.yml`, `nginx.conf`, `.dockerignore` x2) was hand-reviewed for correctness — build
+      stages, jar-glob ambiguity (fixed by disabling the plain jar), the empty-string base-URL bug (fixed),
+      the `/actuator/health` auth gap (fixed) — but the actual `docker compose up` was never run. **This
+      needs to be run and confirmed wherever Docker is actually available before calling Phase 5 done.**
+- [ ] Demo credentials documented in README work end-to-end — verified as far as the underlying mechanism
+      goes (`DemoDataSeederTest` + `AuthenticationFlowTest` cover the register/login path the seeder
+      reuses), but the actual seeded login-through-the-UI flow depends on the same unverified Docker run
+      above
+- [x] `git status` clean on both `backend/` and `frontend/` outside this phase's intended changes
