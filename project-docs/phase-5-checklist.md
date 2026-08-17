@@ -57,19 +57,27 @@ Verify:
 
 ## T21 — docker-compose.yml
 
-- [ ] Create root `docker-compose.yml`: `backend` (build context, port `8080:8080`, named volume for
+- [x] Create root `docker-compose.yml`: `backend` (build context, port `8080:8080`, named volume for
       `/app/data`, healthcheck on `/actuator/health`), `frontend` (build context, build arg
       `VITE_API_BASE_URL: ""`, port `5173:80`, `depends_on: backend: condition: service_healthy`)
+- [x] Found while wiring the healthcheck: `/actuator/health` fell under `SecurityConfig`'s
+      `anyRequest().authenticated()` catch-all, so the unauthenticated `wget` healthcheck would have 401'd
+      forever and the `frontend` service (gated on `service_healthy`) would never have started. Added
+      `.requestMatchers("/actuator/health").permitAll()` and a matching assertion in
+      `AuthenticationFlowTest`
 
 Verify:
+- [x] `./gradlew test --tests "*AuthenticationFlowTest" --tests "*PokemonControllerTest"` passes —
+      confirms the new `permitAll` rule works and doesn't loosen anything else
 - [ ] `docker compose up --build` from a clean state (`docker compose down -v` first) — backend logs show
-      2 Flyway migrations + seeded Pokemon + demo user
-- [ ] `http://localhost:5173` shows a pre-populated list with no login
-- [ ] Log in with `demo@pokeapp.dev` / `Demo1234!` succeeds
-- [ ] Open a detail page, edit proprietary fields, confirm persistence
-- [ ] Browser console clean throughout
+      2 Flyway migrations + seeded Pokemon + demo user — **NOT independently verified**, same
+      Docker-unavailable caveat as T19/T20
+- [ ] `http://localhost:5173` shows a pre-populated list with no login — not verified, same caveat
+- [ ] Log in with `demo@pokeapp.dev` / `Demo1234!` succeeds — not verified, same caveat
+- [ ] Open a detail page, edit proprietary fields, confirm persistence — not verified, same caveat
+- [ ] Browser console clean throughout — not verified, same caveat
 - [ ] Restart (`docker compose up`, same volume): seeder does not re-sync/duplicate, demo login still
-      works
+      works — not verified, same caveat
 
 ## T22 — README
 
