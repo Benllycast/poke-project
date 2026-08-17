@@ -5,23 +5,24 @@ Tracks every individual file/task from
 
 ## T18 — Demo data seeder
 
-- [ ] Edit `application/pokemon/PokemonSyncService.java`: add `syncByIds(List<Integer> ids)`
-- [ ] Create `infrastructure/config/DemoDataSeeder.java` (`CommandLineRunner`): seed demo user via
+- [x] Edit `application/pokemon/PokemonSyncService.java`: add `syncByIds(List<Integer> ids)`
+- [x] Create `infrastructure/config/DemoDataSeeder.java` (`CommandLineRunner`): seed demo user via
       `AuthService.register` (swallow `UserAlreadyExistsException`); seed `app.seed.pokemon-count`
       Pokemon via `syncByIds(1..N)` only when the Pokemon table is empty
-- [ ] Edit `application.yaml`: `app.seed.enabled: true`, `app.seed.pokemon-count: 20`,
+- [x] Edit `application.yaml`: `app.seed.enabled: true`, `app.seed.pokemon-count: 20`,
       `app.seed.demo-email: demo@pokeapp.dev`, `app.seed.demo-password: Demo1234!`
-- [ ] Edit `application-test.yaml`: `app.seed.enabled: false`
+- [x] Edit `application-test.yaml`: `app.seed.enabled: false`
 
 Verify:
-- [ ] `PokemonSyncServiceTest`: `syncByIds` calls sync for every id, returns the synced list
-- [ ] `DemoDataSeederTest`: seeds user + Pokemon when both are empty/missing
-- [ ] `DemoDataSeederTest`: skips Pokemon seeding when the repo already has data
-- [ ] `DemoDataSeederTest`: register conflict (`UserAlreadyExistsException`) is swallowed, not thrown
-- [ ] `DemoDataSeederTest`: does nothing when `app.seed.enabled` is false
-- [ ] `./gradlew test --tests "*PokemonSyncServiceTest" --tests "*DemoDataSeederTest"` passes
-- [ ] `./gradlew test --tests "*AuthenticationFlowTest"` still passes (confirms `app.seed.enabled: false`
-      in `application-test.yaml` actually stops the seeder from running against the isolated test DB)
+- [x] `PokemonSyncServiceTest`: `syncByIds` calls sync for every id, returns the synced list
+- [x] `DemoDataSeederTest`: seeds user + Pokemon when both are empty/missing
+- [x] `DemoDataSeederTest`: skips Pokemon seeding when the repo already has data
+- [x] `DemoDataSeederTest`: register conflict (`UserAlreadyExistsException`) is swallowed, not thrown
+- [x] `DemoDataSeederTest`: does nothing when `app.seed.enabled` is false
+- [x] `./gradlew test --tests "*PokemonSyncServiceTest" --tests "*DemoDataSeederTest"` passes (3/3, 4/4)
+- [x] `./gradlew test --tests "*AuthenticationFlowTest"` still passes (1/1 — confirms
+      `app.seed.enabled: false` in `application-test.yaml` actually stops the seeder from running against
+      the isolated test DB)
 
 ## T19 — Backend Dockerfile
 
