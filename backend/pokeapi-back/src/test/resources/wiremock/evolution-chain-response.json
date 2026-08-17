@@ -1,0 +1,37 @@
+{
+  "id": 49,
+  "chain": {
+    "species": {
+      "name": "cleffa",
+      "url": "https://pokeapi.co/api/v2/pokemon-species/173/"
+    },
+    "evolution_details": [],
+    "evolves_to": [
+      {
+        "species": {
+          "name": "clefairy",
+          "url": "https://pokeapi.co/api/v2/pokemon-species/35/"
+        },
+        "evolution_details": [
+          {
+            "min_level": 16
+          }
+        ],
+        "evolves_to": [
+          {
+            "species": {
+              "name": "clefable",
+              "url": "https://pokeapi.co/api/v2/pokemon-species/36/"
+            },
+            "evolution_details": [
+              {
+                "min_level": 30
+              }
+            ],
+            "evolves_to": []
+          }
+        ]
+      }
+    ]
+  }
+}
