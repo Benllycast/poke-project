@@ -88,7 +88,6 @@ build/
 # Docker
 docker-compose.override.yml
 Dockerfile.override
-.dockerignore
 
 # Jenkins
 # Add Jenkins-specific ignores here
