@@ -59,24 +59,30 @@ Verify:
 
 ## T16 — Sync control + PokemonForm (edit) + delete (US-03/US-04)
 
-- [ ] Edit `src/api/pokemonApi.js`: add `sync(idOrName)`, `update(id, payload)`, `remove(id)`
-- [ ] Create `src/components/SyncForm.jsx` (protected, idOrName input, mutate + invalidate list +
+- [x] Edit `src/api/pokemonApi.js`: add `sync(idOrName)`, `update(id, payload)`, `remove(id)`
+- [x] Create `src/components/SyncForm.jsx` (protected, idOrName input, mutate + invalidate list +
       navigate to new detail)
-- [ ] Create `src/components/PokemonForm.jsx` (controlled fields: name/weight/height/localizedName/
-      region/tags, pre-filled)
-- [ ] Create `src/routes/PokemonEditPage.jsx` (load record, render form, mutate `update`, surface
+- [x] Create `src/components/PokemonForm.jsx` (controlled fields: name/weight/height/localizedName/
+      region/tags, pre-filled) — deliberately only calls `onSubmit` with the *edited* fields;
+      `PokemonEditPage` merges them with the rest of the loaded record so unedited replicated fields
+      (abilities/moves/stats/types/evolutionChain) round-trip untouched and no extra `id` key leaks into
+      the `PUT` body (the backend's `PokemonUpdateRequest` record has no `id` field)
+- [x] Create `src/routes/PokemonEditPage.jsx` (load record, render form, mutate `update`, surface
       400/404)
-- [ ] Edit `src/routes/PokemonDetailPage.jsx`: add protected delete button (confirm guard, mutate
+- [x] Edit `src/routes/PokemonDetailPage.jsx`: add protected delete button (confirm guard, mutate
       `remove`, invalidate list, navigate to `/`)
-- [ ] Edit `src/routes/PokemonListPage.jsx`: render `SyncForm`
-- [ ] Edit `src/App.jsx`: wire `/pokemon/:id/edit` behind `ProtectedRoute`
+- [x] Edit `src/routes/PokemonListPage.jsx`: render `SyncForm`
+- [x] Edit `src/App.jsx`: wire `/pokemon/:id/edit` behind `ProtectedRoute`
+- [x] Updated `PokemonListPage.test.jsx`/`PokemonDetailPage.test.jsx` to wrap `AuthProvider` — both pages
+      now render `SyncForm`/the auth-gated delete button, which call `useAuth()`
 
 Verify:
-- [ ] `PokemonForm.test.jsx`: pre-fills from an existing record
-- [ ] `PokemonForm.test.jsx`: submit calls `onSubmit` with the merged payload
-- [ ] `PokemonEditPage.test.jsx` (mutation mocked): success path invalidates + navigates
-- [ ] `PokemonEditPage.test.jsx`: a mocked 400 renders the validation message inline
-- [ ] `npm run test -- --run PokemonForm PokemonEditPage` passes
+- [x] `PokemonForm.test.jsx`: pre-fills from an existing record
+- [x] `PokemonForm.test.jsx`: submit calls `onSubmit` with the edited field values
+- [x] `PokemonEditPage.test.jsx` (mutation mocked): success path invalidates + navigates
+- [x] `PokemonEditPage.test.jsx`: a mocked 400 renders the validation message inline
+- [x] `npm run test -- --run PokemonForm PokemonEditPage PokemonListPage PokemonDetailPage` passes (8/8)
+- [x] `npm run lint` clean
 
 ## T17 — Cleanup, NotFoundPage, and a full manual pass
 
