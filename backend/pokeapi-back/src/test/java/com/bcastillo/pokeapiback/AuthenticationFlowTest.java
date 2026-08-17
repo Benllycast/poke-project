@@ -61,6 +61,9 @@ class AuthenticationFlowTest {
         mockMvc.perform(get("/api/pokemon"))
                 .andExpect(status().isOk());
 
+        mockMvc.perform(get("/actuator/health"))
+                .andExpect(status().isOk());
+
         String createBody = """
                 {"id":100000,"name":"custom-mon"}
                 """;
